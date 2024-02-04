@@ -1,5 +1,5 @@
 import Foundation
-@testable import K1
+@testable import LCLK1
 import XCTest
 
 final class PrivateKeyImportTests: XCTestCase {

@@ -16,10 +16,5 @@
 set -eu
 find . -name '*.gyb' |                                               \
     while read file; do                                              \
-		swiftfilename="${file%.gyb}";									\
-        ./scripts/gyb --line-directive '' -o "$swiftfilename" "$file"; \
-        swiftformat "$swiftfilename";									\
-		swiftfile="${swiftfilename%.swift}.generated.swift";					\
-		mv "$swiftfilename" "$swiftfile";									\
-		echo "🔮🐍 GYB generated file: '$swiftfile'";							\
+        ./scripts/gyb --line-directive '' -o "${file%.gyb}" "${file%.generated.swift}"; \
     done

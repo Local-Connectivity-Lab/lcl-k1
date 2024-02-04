@@ -1,5 +1,5 @@
 import Foundation
-import K1
+import LCLK1
 import XCTest
 
 final class PerformanceTests: XCTestCase {
@@ -69,12 +69,14 @@ final class PerformanceTests: XCTestCase {
 					let bobPrivateKey = K1.KeyAgreement.PrivateKey()
 					let bobPublicKey = bobPrivateKey.publicKey
 
+					#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 					var ab = try alicePrivateKey.sharedSecretFromKeyAgreement(with: bobPublicKey)
 					var ba = try bobPrivateKey.sharedSecretFromKeyAgreement(with: alicePublicKey)
 					XCTAssertEqual(ab, ba)
 					ab = try alicePrivateKey.ecdh(with: bobPublicKey)
 					ba = try bobPrivateKey.ecdh(with: alicePublicKey)
 					XCTAssertEqual(ab, ba)
+					#endif
 				}
 			} catch {
 				XCTFail("abort")

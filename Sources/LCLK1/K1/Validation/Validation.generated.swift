@@ -2,9 +2,13 @@
 // any edits of this file WILL be overwritten and thus discarded
 // see section `gyb` in `README` for details.
 
-import protocol CryptoKit.Digest
-import struct CryptoKit.SHA256
 import Foundation
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+import struct CryptoKit.SHA256
+import protocol CryptoKit.Digest
+#else
+import Crypto
+#endif
 
 // MARK: Verify + ECDSA
 extension K1.ECDSA.PublicKey {

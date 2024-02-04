@@ -3,6 +3,14 @@
 # K1 🏔
 > Safer than K2
 
+## Note:
+This repo is a fork of the open-sourced K1 project from [Alexander Cyon](https://github.com/Sajjon). 
+Contributors at the Local Connectivity Lab (LCL) at the Paul G. Allen School of Computer Science and Engineering at the University of Washington made the following changes to better fit their project need. 
+Since the original project is licensed under Apache License 2.0, so is this forked version and all future versions of this forked project at LCL.
+
+* Build ECDSA algorithm on Linux platform
+---
+
 _K1_ is Swift wrapper around [libsecp256k1 (bitcoin-core/secp256k1)][lib], offering ECDSA, Schnorr ([BIP340][bip340]) and ECDH features.
 
 # Documentation

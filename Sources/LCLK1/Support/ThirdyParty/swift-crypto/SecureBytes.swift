@@ -1,5 +1,4 @@
 // From: https://github.com/apple/swift-crypto/blob/22fd38919566816705c57d5f4dd5a97a4edcf25e/Sources/Crypto/Util/SecureBytes.swift
-// Commit: 22fd38919566816705c57d5f4dd5a97a4edcf25e
 
 //===----------------------------------------------------------------------===//
 //
@@ -16,6 +15,12 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+#if os(Linux)
+import CCryptoBoringSSL
+#endif
+
+
+private let emptyStorage:SecureBytes.Backing = SecureBytes.Backing.createEmpty()
 
 struct SecureBytes {
     @usableFromInline
@@ -28,7 +33,11 @@ struct SecureBytes {
 
     @usableFromInline
     init(count: Int) {
-        self.backing = SecureBytes.Backing.create(randomBytes: count)
+        if count == 0 {
+            self.backing = emptyStorage
+        } else {
+            self.backing = SecureBytes.Backing.create(randomBytes: count)
+        }
     }
 
     init<D: ContiguousBytes>(bytes: D) {
@@ -76,7 +85,7 @@ extension SecureBytes {
 
 // MARK: - Equatable conformance, constant-time
 extension SecureBytes: Equatable {
-    static func == (lhs: SecureBytes, rhs: SecureBytes) -> Bool {
+    public static func == (lhs: SecureBytes, rhs: SecureBytes) -> Bool {
         return safeCompare(lhs, rhs)
     }
 }
@@ -162,6 +171,20 @@ extension SecureBytes: RangeReplaceableCollection {
             self.backing.replaceSubrangeFittingWithinCapacity(offsetRange, with: newElements)
         }
     }
+
+    // The default implementation of this from RangeReplaceableCollection can't take advantage of `ContiguousBytes`, so we override it here
+    @inlinable
+    public mutating func append<Elements: Sequence>(contentsOf newElements: Elements) where Elements.Element == UInt8 {
+        let done:Void? = newElements.withContiguousStorageIfAvailable {
+            replaceSubrange(endIndex..<endIndex, with: $0)
+        }
+
+        if done == nil {
+            for element in newElements {
+                append(element)
+            }
+        }
+    }
 }
 
 // MARK: - ContiguousBytes conformance
@@ -178,6 +201,11 @@ extension SecureBytes: ContiguousBytes {
         }
 
         return try self.backing.withUnsafeMutableBytes(body)
+    }
+
+    @inlinable
+    func withContiguousStorageIfAvailable<R>(_ body: (UnsafeBufferPointer<UInt8>) throws -> R) rethrows -> R? {
+        return try self.backing.withContiguousStorageIfAvailable(body)
     }
 }
 
@@ -224,6 +252,12 @@ extension SecureBytes {
 
     @usableFromInline
     internal class Backing: ManagedBuffer<BackingHeader, UInt8> {
+
+        @usableFromInline
+        class func createEmpty() -> Backing {
+            return Backing.create(minimumCapacity: 0, makingHeaderWith: { _ in BackingHeader(count: 0, capacity: 0) }) as! Backing
+        }
+
         @usableFromInline
         class func create(capacity: Int) -> Backing {
             let capacity = Int(UInt32(capacity).nextPowerOf2ClampedToMax())
@@ -264,7 +298,11 @@ extension SecureBytes {
             let bytesToClear = self.header.capacity
 
             _ = self.withUnsafeMutablePointerToElements { elementsPtr in
+                #if os(Linux)
+                CCryptoBoringSSL_OPENSSL_cleanse(elementsPtr, bytesToClear)
+                #else
                 memset_s(elementsPtr, bytesToClear, 0, bytesToClear)
+                #endif
             }
         }
 
@@ -413,6 +451,14 @@ extension SecureBytes.Backing: ContiguousBytes {
 
         return try self.withUnsafeMutablePointerToElements { elementsPtr in
             return try body(UnsafeMutableRawBufferPointer(start: elementsPtr, count: capacity))
+        }
+    }
+
+    func withContiguousStorageIfAvailable<R>(_ body: (UnsafeBufferPointer<UInt8>) throws -> R) rethrows -> R? {
+        let count = self.count
+
+        return try self.withUnsafeMutablePointerToElements { elementsPtr in
+            return try body(UnsafeBufferPointer(start: elementsPtr, count: count))
         }
     }
 }

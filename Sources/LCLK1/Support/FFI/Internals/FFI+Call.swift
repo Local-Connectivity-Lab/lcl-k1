@@ -1,4 +1,8 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
+#else
+import Crypto
+#endif
 import secp256k1
 
 // MARK: - FFI

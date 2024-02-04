@@ -1,6 +1,10 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
-import K1 // not `@testable import`!!
+import LCLK1 // not `@testable import`!!
 import XCTest
 
 final class APITest: XCTestCase {
@@ -92,10 +96,14 @@ final class APITest: XCTestCase {
 	}
 
 	func testECDH() throws {
+		#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 		let alice = K1.KeyAgreement.PrivateKey()
 		let bob = K1.KeyAgreement.PrivateKey()
 		let ab = try alice.sharedSecretFromKeyAgreement(with: bob.publicKey)
 		let ba = try bob.sharedSecretFromKeyAgreement(with: alice.publicKey)
 		XCTAssertEqual(ab, ba)
+		#else
+		throw XCTSkip("SKipped on Linux Platform")
+		#endif
 	}
 }

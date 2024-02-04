@@ -1,4 +1,8 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
 
 // MARK: - _K1KeyExportable
@@ -46,6 +50,7 @@ extension K1._PrivateKeyImplementation {
 	init(
 		pemRepresentation: String
 	) throws {
+        
 		let pem = try ASN1.PEMDocument(pemString: pemRepresentation)
 
 		switch pem.type {

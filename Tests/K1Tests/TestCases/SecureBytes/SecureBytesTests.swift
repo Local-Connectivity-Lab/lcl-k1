@@ -14,7 +14,7 @@
 
 // Modifications: Removed all `#if` and converted error type `CryptoKitError` -> `K1.Error`
 
-@testable import K1
+@testable import LCLK1
 import XCTest
 
 final class SecureBytesTests: XCTestCase {

@@ -1,5 +1,5 @@
 import Foundation
-import K1
+import LCLK1
 import XCTest
 
 final class PrivateKeyGenerationTests: XCTestCase {

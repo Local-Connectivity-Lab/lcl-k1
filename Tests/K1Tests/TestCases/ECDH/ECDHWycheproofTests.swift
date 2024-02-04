@@ -20,18 +20,22 @@
 // swiftformat:enable strip
 
 import Foundation
-@testable import K1
+@testable import LCLK1
 import XCTest
 
 // MARK: - ECDHWycheproofTests
 final class ECDHWycheproofTests: XCTestCase {
 	func testECDHWycheproof() throws {
+		#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 		let _ = try testSuite(
 			jsonName: "wycheproof_ecdh_ASN1x963",
 			testFunction: { (group: ECDHTestGroup) in
 				testGroup(group: group)
 			}
 		)
+		#else
+		throw XCTSkip("Skipped on Linux Platform")
+		#endif
 	}
 }
 

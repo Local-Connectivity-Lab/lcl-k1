@@ -1,5 +1,5 @@
 import Foundation
-import K1
+import LCLK1
 
 // MARK: - ECSignature
 public protocol ECSignature {}

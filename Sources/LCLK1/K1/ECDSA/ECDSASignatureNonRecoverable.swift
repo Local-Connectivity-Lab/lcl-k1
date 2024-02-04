@@ -1,5 +1,9 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import protocol CryptoKit.Digest
 import struct CryptoKit.SHA256
+#else
+import Crypto
+#endif
 import Foundation
 
 // MARK: - K1.ECDSA.Signature

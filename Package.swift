@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -20,7 +20,7 @@ let cSettings: [CSetting] = [
 ]
 
 let package = Package(
-	name: "K1",
+	name: "lcl-k1",
 	platforms: [
 		.iOS(.v13),
 		.macOS(.v11),
@@ -29,13 +29,15 @@ let package = Package(
 	],
 	products: [
 		.library(
-			name: "K1",
+			name: "LCLK1",
 			targets: [
-				"K1",
+				"LCLK1",
 			]
 		),
 	],
-	dependencies: [],
+	dependencies: [
+		.package(url: "https://github.com/johnnzhou/swift-crypto.git", branch: "main")
+    ],
 	targets: [
 		// Target `libsecp256k1` https://github.com/bitcoin-core/secp256k1
 		.target(
@@ -68,9 +70,11 @@ let package = Package(
 			cSettings: cSettings
 		),
 		.target(
-			name: "K1",
+			name: "LCLK1",
 			dependencies: [
 				"secp256k1",
+                .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "CCryptoBoringSSL", package: "swift-crypto")
 			],
 			exclude: [
 				"K1/Keys/Keys.swift.gyb",
@@ -84,7 +88,7 @@ let package = Package(
 		.testTarget(
 			name: "K1Tests",
 			dependencies: [
-				"K1",
+				"LCLK1",
 			],
 			exclude: [
 				"TestCases/Keys/PublicKey/PublicKeyEncodingTests.swift.gyb",

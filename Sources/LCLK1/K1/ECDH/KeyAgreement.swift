@@ -1,4 +1,8 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import struct CryptoKit.SharedSecret
+#else
+import Crypto
+#endif
 import Foundation
 
 // MARK: - K1.KeyAgreement

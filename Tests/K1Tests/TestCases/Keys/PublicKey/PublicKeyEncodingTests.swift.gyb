@@ -3,7 +3,7 @@
 // see section `gyb` in `README` for details.
 
 import Foundation
-@testable import K1
+@testable import LCLK1
 import XCTest
 
 private extension XCTestCase {

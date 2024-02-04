@@ -19,8 +19,12 @@
 
 // swiftformat:enable strip
 
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
-@testable import K1
+#else
+import Crypto
+#endif
+@testable import LCLK1
 import XCTest
 
 // MARK: - TestSuite

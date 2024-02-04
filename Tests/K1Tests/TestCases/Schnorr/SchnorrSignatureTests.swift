@@ -1,6 +1,10 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
-import K1
+import LCLK1
 import XCTest
 
 final class SchnorrSignatureTests: XCTestCase {

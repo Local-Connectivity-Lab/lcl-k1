@@ -1,6 +1,10 @@
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
-@testable import K1
+@testable import LCLK1
 import XCTest
 
 // MARK: - ECDHX963Suite
@@ -54,10 +58,14 @@ final class TwoVariantsOfECDHWithKDFTests: XCTestCase {
 	}
 
 	func testTwoVariantsOfECDHWithKDF_vectors() throws {
+		#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 		let fileURL = Bundle.module.url(forResource: "cyon_ecdh_two_variants_with_kdf", withExtension: ".json")
 		let data = try Data(contentsOf: fileURL!)
 		let suite = try JSONDecoder().decode(ECDHX963Suite.self, from: data)
 		try suite.vectors.forEach(doTest)
+		#else
+		throw XCTSkip("Skipped on Linux Platform")
+		#endif
 	}
 }
 
