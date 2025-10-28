@@ -36,7 +36,7 @@ let package = Package(
 		),
 	],
 	dependencies: [
-		.package(url: "https://github.com/johnnzhou/swift-crypto.git", branch: "main")
+		.package(url: "https://github.com/Local-Connectivity-Lab/swift-crypto.git", from: "1.0.0")
     ],
 	targets: [
 		// Target `libsecp256k1` https://github.com/bitcoin-core/secp256k1
